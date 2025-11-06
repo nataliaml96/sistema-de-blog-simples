@@ -28,7 +28,6 @@ public class Usuario {
     @Column(name="tipo_usuario", insertable = false, updatable = false,nullable = true)
     private String tipo_usuario;
 
-    @Embedded
     private String email;
 
     private String telefone;
