@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Autenticação controller",description = "Gerenciamento de autenticações!")
+@Tag(name = "Autenticação controller", description = "Gerenciamento de autenticações!")
 public class AuthController {
 
     @Autowired
@@ -21,18 +21,13 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Autenticação de usuário", description = "Método para fazer login do usuário!")
-    public ResponseEntity<LoginResponseDto> login (@RequestBody LoginRequestDto login){
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto login) {
 
-        if(login.email().equals("string") && login.senha().equals("string")) {
-
-            var token = tokenService.gerarToken(login);
-            if (token == null){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            return  ResponseEntity.ok(new LoginResponseDto(token));
+        var token = tokenService.gerarToken(login);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok(new LoginResponseDto(token));
 
     }
 }

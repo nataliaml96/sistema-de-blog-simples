@@ -32,6 +32,5 @@ public class Post {
         this.titulo = postRequestDTO.titulo();
         this.conteudo = postRequestDTO.conteudo();
         this.autor = postRequestDTO.autor();
-
     }
 }

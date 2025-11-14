@@ -17,8 +17,11 @@ import java.util.Collections;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
+
+    public JwtFilter(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -26,52 +29,46 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-
         String path = request.getRequestURI();
 
-        if(path.equals("/auth/login")
-        || path.equals("/usuario/cadastrese")
-        ||path.startsWith("/swagger")
-        ||path.startsWith("/v3/api-docs")
-        ||path.startsWith("/webjars")){
+        // Rotas públicas que não precisam de autenticação
+        if(path.endsWith("/auth/login")
+                || path.endsWith("/usuario/cadastrese")
+                || path.contains("/swagger")
+                || path.contains("/v3/api-docs")
+                || path.contains("/webjars")) {
 
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
             return;
-
         }
 
         String header = request.getHeader("Authorization");
 
-        if (header !=null && header.startsWith("Bearer ")){
-            String token = header.replace("Bearer ","");
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.replace("Bearer ", "");
             try {
-
-
                 var jwt = tokenService.validarToken(token);
-
                 var usuario = tokenService.consultarUsuarioPorToken(token);
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(usuario,
-                                null, Collections.emptyList());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                System.out.println("Usuario logado "+ usuario.email() + jwt.getSubject());
-
-            }catch (Exception e){
+            } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token inválido ou expirado!");
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Token inválido ou expirado!\"}");
                 return;
             }
 
-        }else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Token não informado!");
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Token não informado!\"}");
             return;
         }
 
         filterChain.doFilter(request, response);
-
     }
 }
