@@ -3,6 +3,7 @@ package com.natalia.sistema_blog_simples.application.services;
 import com.natalia.sistema_blog_simples.application.dto.usuario.UsuarioCriarRequestDto;
 import com.natalia.sistema_blog_simples.application.dto.usuario.UsuarioResponseDto;
 import com.natalia.sistema_blog_simples.domain.entities.Usuario;
+import com.natalia.sistema_blog_simples.domain.exceptions.NegocioException;
 import com.natalia.sistema_blog_simples.domain.repository.UsuarioRepository;
 import com.natalia.sistema_blog_simples.domain.valueobjects.EnumStatusUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,11 @@ public class UsuarioService {
                     .map(UsuarioResponseDto::new)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new NegocioException("Entre em contato com o suporte.");
         }
     }
-    public UsuarioResponseDto buscarPorId(Long id){
 
+    public UsuarioResponseDto buscarPorId(Long id){
 
         var usuarioBanco =usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO);
         return usuarioBanco
@@ -40,13 +41,11 @@ public class UsuarioService {
                 .orElse(null);
     }
 
-
     public UsuarioResponseDto salvarUsuario(UsuarioCriarRequestDto usuarioRequest) throws Exception {
         Usuario usuario = new Usuario(usuarioRequest);
         usuarioRepository.save(usuario);
         return new UsuarioResponseDto(usuario);
     }
-
 
     public boolean excluirUsuario(Long id){
        try{
@@ -60,7 +59,7 @@ public class UsuarioService {
 
             return true;
        }catch (Exception e){
-           System.out.print("Erro ao excluir usuaria!");
+           System.out.print("Erro ao excluir Usuário!");
            return false;
        }
     }
@@ -98,7 +97,7 @@ public class UsuarioService {
             alterarStatusUsuario(usuario,EnumStatusUsuario.ATIVO);
             return true;
         }catch (Exception e){
-            System.out.println("Erro ao bloquear usuario!");
+            System.out.println("Erro ao bloquear Usuário!");
             return false;
         }
     }

@@ -7,6 +7,8 @@ import com.natalia.sistema_blog_simples.application.dto.auth.LoginRequestDto;
 import com.natalia.sistema_blog_simples.application.dto.usuario.UsuarioLogadoDto;
 import com.natalia.sistema_blog_simples.domain.entities.Token;
 import com.natalia.sistema_blog_simples.domain.entities.Usuario;
+import com.natalia.sistema_blog_simples.domain.exceptions.TokenNaoEncontradoException;
+import com.natalia.sistema_blog_simples.domain.exceptions.UsuarioNaoEncontradoException;
 import com.natalia.sistema_blog_simples.domain.repository.TokenRepository;
 import com.natalia.sistema_blog_simples.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class TokenService {
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
             var usuario = usuarioRepository.findByEmail(loginRequestDTO.email())
-                    .orElseThrow(()-> new RuntimeException("Usuário não encontrado!"));
+                    .orElseThrow(()-> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
 
             var dataExpiracao = this.gerarDataExpiracao();
 
@@ -60,10 +62,10 @@ public class TokenService {
 
     public Usuario consultarUsuarioPorToken(String token) throws Exception {
         var tokenBanco = tokenRepository.findByToken(token)
-                .orElseThrow(()-> new RuntimeException("Token não encontrado!"));
+                .orElseThrow(()-> new TokenNaoEncontradoException("Token não encontrado!"));
 
         if(tokenBanco.getDataExpiracao().isBefore(LocalDateTime.now())){
-            throw new Exception("Token expirado!");
+            throw new TokenNaoEncontradoException("Token expirado!");
         }
 
         tokenBanco.setDataExpiracao(LocalDateTime.now().plusMinutes(tempo));

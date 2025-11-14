@@ -3,6 +3,7 @@ package com.natalia.sistema_blog_simples.application.services;
 import com.natalia.sistema_blog_simples.application.dto.post.PostRequestDTO;
 import com.natalia.sistema_blog_simples.application.dto.post.PostResponseDTO;
 import com.natalia.sistema_blog_simples.domain.entities.Post;
+import com.natalia.sistema_blog_simples.domain.exceptions.PostNaoEncontradoException;
 import com.natalia.sistema_blog_simples.domain.repository.PostRepository;
 import com.natalia.sistema_blog_simples.domain.valueobjects.EnumStatusPost;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,14 @@ public class PostService {
     }
 
     public PostResponseDTO publicarPost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new RuntimeException("Post não existe."));
+        Post post = postRepository.findById(id).orElseThrow(()-> new PostNaoEncontradoException("Post não existe."));
         post.setStatus(EnumStatusPost.PUBLICADO);
         post = postRepository.save(post);
         return new PostResponseDTO(post);
     }
 
     public PostResponseDTO buscarPostId(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new RuntimeException("Post não existe."));
+        Post post = postRepository.findById(id).orElseThrow(()-> new PostNaoEncontradoException("Post não existe."));
         return new PostResponseDTO(post);
     }
 
