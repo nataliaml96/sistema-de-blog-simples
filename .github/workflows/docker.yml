@@ -12,13 +12,8 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: 🔧 Instalar o docker compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-
-      - name: 🐋 Subir ambiente com Docker Compose
-        run: docker-compose up -d
+      - name: 🐋 Subir ambiente com Docker Compose (v2)
+        run: docker compose up -d
 
       - name: ⏱️ Aguardar os contêineres estabilizarem
         run: |
@@ -31,26 +26,24 @@ jobs:
           n=0
           until [ $n -ge 12 ]
           do
-          # O "curl --fail" falha com exit code se o HTTP não for 200
-          if curl --fail http://localhost:8080/swagger-ui/index.html; then
-            echo "✅ API está online!"
-            break # Sucesso, sai do loop
-          fi
-            
-          n=$((n+1))
-          echo "Tentativa $n/12 falhou. Aguardando 10s..."
-          sleep 10
+            if curl --fail http://localhost:8080/swagger-ui/index.html; then
+              echo "✅ API está online!"
+              break
+            fi
+
+            n=$((n+1))
+            echo "Tentativa $n/12 falhou. Aguardando 10s..."
+            sleep 10
           done
-            
-          # Se o loop terminar (n=12) sem sucesso, falha o build
+
           if [ $n -eq 12 ]; then
-          echo "❌ API não respondeu após 2 minutos."
-          exit 1
+            echo "❌ API não respondeu após 2 minutos."
+            exit 1
           fi
 
       - name: 🛑 Parar os contêineres após teste
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
       - name: ✅ Login no Docker Hub
         uses: docker/login-action@v2

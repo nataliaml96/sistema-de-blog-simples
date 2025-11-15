@@ -16,18 +16,18 @@ services:
       retries: 10         # Aumentamos as tentativas para 10
       start_period: 90s   # <-- A GRANDE MUDANÇA
 
-#  api-spring:
-#    container_name: api-aula
-#    build: .
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/aulaapi
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=123456
-#    depends_on:
-#      postgres-db:
-#        condition: service_healthy
-#
-#volumes:
-#  postgres-data-local:
+  api-spring:
+    container_name: api-blog
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/sistema-blog-simples
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123456
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+volumes:
+  postgres-data-local:
