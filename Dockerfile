@@ -16,7 +16,7 @@ RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-jammy
 
-COPY --from=builder /app/target/aulaapijovemprogramador-0.0.1-SNAPSHOT.jar /app.jar
+COPY --from=builder /app/target/sistema-blog-simples-0.0.1-SNAPSHOT.jar /app.jar
 
 
 EXPOSE 8080

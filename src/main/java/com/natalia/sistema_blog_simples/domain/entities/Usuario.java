@@ -40,7 +40,7 @@ public class Usuario {
         this.nome = usuario.nome();
     }
 
-    public Usuario atulizarUsuarioFromDTO(Usuario usuarioBanco, UsuarioCriarRequestDto dto){
+    public Usuario atualizarUsuarioFromDTO(Usuario usuarioBanco, UsuarioCriarRequestDto dto){
         usuarioBanco.setEmail(dto.email());
         usuarioBanco.setNome(dto.nome());
         usuarioBanco.setSenha(dto.senha());
