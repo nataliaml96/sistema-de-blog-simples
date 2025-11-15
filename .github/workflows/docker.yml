@@ -25,17 +25,6 @@ jobs:
           echo "Aguardando 30 segundos para os serviços iniciarem..."
           sleep 30
 
-      - name: 🩺 Verificar status dos contêineres
-        run: |
-          echo "--- Status dos Contêineres (incluindo os que falharam) ---"
-          docker-compose ps -a
-            
-          echo "--- Logs do Banco de Dados ---"
-          docker-compose logs meu-postgres-local 
-            
-          echo "--- Logs da API ---"
-          docker-compose logs api-aula
-
       - name: 📞 Testar API (com retentativas)
         run: |
           echo "Aguardando a API ficar online... (Máx 2 min)"
